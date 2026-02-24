@@ -24,7 +24,14 @@
   function getExpert(){return load("expert",null)}
   function setRespondent(r){save("respondent",r)}
   function getRespondent(){return load("respondent",null)}
-  function getRespondents(){return load("respondents",[])}
+  function getRespondents(){
+    var own=load("respondents",[])
+    function r(key){try{var v=localStorage.getItem(key);return v?JSON.parse(v):[]}catch(e){return []}}
+    var sets=[own,r("lab6_respondents"),r("lab5_respondents"),r("lab4_respondents"),r("lab3_respondents")]
+    var map={}
+    sets.forEach(function(arr){arr.forEach(function(x){map[x.name+"|"+x.sex+"|"+x.age]=x})})
+    return Object.values(map)
+  }
   function setRespondents(arr){save("respondents",arr)}
   function addRespondent(obj){var arr=getRespondents();arr.push(obj);setRespondents(arr)}
   function refreshRoleUI(){
@@ -102,23 +109,24 @@
   }
   function metricsForRespondent(rid){
     var all=readLabResults()
+    var resp=getRespondents().find(function(r){return r.id===rid})||null
     var vals={}
-    // L3
-    all.l3.filter(function(x){return x.resp===rid}).forEach(function(x){
+    function samePerson(x){
+      if(!resp)return x.resp===rid
+      return x.resp===rid || (x.sex===resp.sex && x.age===resp.age)
+    }
+    all.l3.filter(function(x){return samePerson(x)}).forEach(function(x){
       vals["l3_"+x.test+"_mean"]=x.mean
     })
-    // L4
-    all.l4.filter(function(x){return x.resp===rid}).forEach(function(x){
+    all.l4.filter(function(x){return samePerson(x)}).forEach(function(x){
       vals["l4_"+x.mode+"_mean"]=x.mean
       vals["l4_"+x.mode+"_hits"]=x.hits
     })
-    // L5
-    all.l5.filter(function(x){return x.resp===rid}).forEach(function(x){
+    all.l5.filter(function(x){return samePerson(x)}).forEach(function(x){
       vals["l5_"+x.mode+"_dev"]=x.mean
       vals["l5_"+x.mode+"_lock"]=x.lockSec
     })
-    // L6
-    all.l6.filter(function(x){return x.resp===rid}).forEach(function(x){
+    all.l6.filter(function(x){return samePerson(x)}).forEach(function(x){
       vals["l6_"+x.testKey]=x.score
     })
     return vals
@@ -286,4 +294,3 @@
   renderAnalysisSelectorsInit()
   showSection((location.hash||"#home").replace("#",""))
 })()
-
