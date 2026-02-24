@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ЛР7 • ПВК и физиологическая цена</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">ЛР7: ПВК и физиологическая цена</div>
+      <nav class="nav">
+        <button class="nav-toggle" id="nav-toggle">≡</button>
+        <ul class="nav-list" id="nav-list">
+          <li><a href="#home" data-link>Главная</a></li>
+          <li><a href="#auth" data-link>Роли и вход</a></li>
+          <li class="role-expert"><a href="#respondents" data-link>Респонденты</a></li>
+          <li class="role-expert"><a href="#criteria" data-link>Критерии ПВК</a></li>
+          <li><a href="#analysis" data-link>Анализ</a></li>
+          <li class="role-expert"><a href="#physio" data-link>Физиология</a></li>
+          <li><a href="report.html">Отчет</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    <section id="home" data-section>
+      <h1>Лабораторная работа 7</h1>
+      <p>Связь ПВК с результатами тестов (ЛР3–ЛР6) и оценка физиологической цены деятельности. Критерии — комбинации показателей с весами, направлениями и «срезами».</p>
+    </section>
+    <section id="auth" data-section hidden>
+      <h2>Роли и вход</h2>
+      <div class="grid-two">
+        <form id="expert-login" class="card form">
+          <h3>Эксперт</h3>
+          <label>Имя<input id="exp-name" required></label>
+          <label>Email<input id="exp-email" type="email" required></label>
+          <button class="btn" type="submit">Войти как эксперт</button>
+        </form>
+        <form id="respondent-login" class="card form">
+          <h3>Респондент</h3>
+          <label>ФИО<input id="resp-name" required></label>
+          <div class="grid-two">
+            <label>Пол<select id="resp-sex"><option value="M">М</option><option value="F">Ж</option></select></label>
+            <label>Возраст<input id="resp-age" type="number" min="10" max="100" required></label>
+          </div>
+          <button class="btn" type="submit">Войти как респондент</button>
+        </form>
+      </div>
+    </section>
+    <section id="respondents" data-section hidden>
+      <h2>Респонденты</h2>
+      <div class="grid-two">
+        <form id="add-respondent" class="card form">
+          <label>ФИО<input id="add-name" required></label>
+          <div class="grid-two">
+            <label>Пол<select id="add-sex"><option value="M">М</option><option value="F">Ж</option></select></label>
+            <label>Возраст<input id="add-age" type="number" min="10" max="100" required></label>
+          </div>
+          <button class="btn" type="submit">Добавить</button>
+        </form>
+        <div class="card"><h3>Список</h3><div id="resp-list"></div></div>
+      </div>
+    </section>
+    <section id="criteria" data-section hidden>
+      <h2>Критерии ПВК</h2>
+      <div class="grid-two">
+        <form id="add-crit" class="card form">
+          <label>Профессия<input id="crit-prof" placeholder="например, Тестировщик" required></label>
+          <label>Название критерия<input id="crit-name" placeholder="например, Внимательность" required></label>
+          <label>Вес критерия (0..1)<input id="crit-weight" type="number" step="0.1" min="0" max="1" value="1"></label>
+          <label>Привязанные ПВК<input id="crit-pvk" placeholder="через запятую (например: Внимательность, Концентрация)"></label>
+          <h3>Показатели</h3>
+          <div id="indicators"></div>
+          <button type="button" id="add-ind" class="btn">Добавить показатель</button>
+          <button class="btn" type="submit">Сохранить критерий</button>
+        </form>
+        <div class="card">
+          <h3>Справочник показателей</h3>
+          <div id="metrics-list" class="muted"></div>
+          <h3>Список критериев</h3>
+          <div id="crit-list"></div>
+        </div>
+      </div>
+    </section>
+    <section id="analysis" data-section hidden>
+      <h2>Анализ по профессии</h2>
+      <div class="grid-two">
+        <div class="card form">
+          <label>Респондент<select id="ana-respondent"></select></label>
+          <label>Профессия<select id="ana-prof"></select></label>
+          <button id="run-ana" class="btn">Рассчитать</button>
+        </div>
+        <div class="card">
+          <h3>Итоги</h3>
+          <div id="ana-result"></div>
+        </div>
+      </div>
+    </section>
+    <section id="physio" data-section hidden>
+      <h2>Физиологическая цена (импорт)</h2>
+      <div class="grid-two">
+        <form id="phys-form" class="card form">
+          <label>Респондент<select id="phys-respondent"></select></label>
+          <label>Показатель<select id="phys-metric">
+            <option value="ECG">ЭКГ (ЧСС)</option>
+            <option value="PPG">Пульсовая волна (ЧСС)</option>
+            <option value="EEG">ЭЭГ (мощность диапазона)</option>
+            <option value="RESP">Частота дыхания</option>
+          </select></label>
+          <label>Фон ДО (среднее)<input id="phys-pre" type="number" step="0.01" required></label>
+          <label>ВО ВРЕМЯ (среднее)<input id="phys-during" type="number" step="0.01" required></label>
+          <label>Фон ПОСЛЕ (среднее)<input id="phys-post" type="number" step="0.01" required></label>
+          <button class="btn" type="submit">Сохранить</button>
+        </form>
+        <div class="card">
+          <h3>Аналитика</h3>
+          <div id="phys-list"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>© ЛР7 ПВК и Физиология</div>
+      <div><a href="report.html">Отчет</a></div>
+    </div>
+  </footer>
+  <script src="app.js"></script>
+</body>
+</html>
+
